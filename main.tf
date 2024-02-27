@@ -62,12 +62,12 @@ module "alb" {
       protocol = "HTTP"
    
       forward = {
-        target_id = aws_instance.blog.id      }
+        target_id = blog_dev      }
     }
   }
 
   target_groups = {
-    ex-instance = {
+    blog_dev = {
       name_prefix      = "blog-"
       protocol         = "HTTP"
       port             = 80
