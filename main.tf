@@ -47,7 +47,8 @@ resource "aws_instance" "blog" {
 }
 
 module "alb" {
-  source = "terraform-aws-modules/alb/aws"
+  source  = "terraform-aws-modules/alb/aws"
+  version = "9.7.0"
 
   name    = "blog-alb"
   
@@ -55,28 +56,24 @@ module "alb" {
   subnets         = module.blog_vpc.public_subnets
   security_groups = module.blog_sg.security_group_id
   
-  target_groups = [
-    {
+  listeners = {
+    ex-http-https-redirect = {
+      port     = 80
+      protocol = "HTTP"
+   
+      forward = {
+        target_id = aws_instance.blog.id      }
+    }
+  }
+
+  target_groups = {
+    ex-instance = {
       name_prefix      = "blog-"
       protocol         = "HTTP"
       port             = 80
       target_type      = "instance"
-      targets = {
-        my_target = {
-          target_id = aws_instance.blog.id
-          port = 80
-        }
-      }
     }
-  ]
-  
-  listeners = [
-    {
-      port                = 80
-      protocol            = "HTTP"
-      target_group_indes  = 0
-    }
-  ]
+  }
 
   tags = {
       Environment = "dev"
