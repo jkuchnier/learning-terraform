@@ -62,7 +62,8 @@ module "alb" {
       protocol = "HTTP"
    
       forward = {
-        target_id = blog_dev      }
+        target_group_key = blog_dev
+      }
     }
   }
 
